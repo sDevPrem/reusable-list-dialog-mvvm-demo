@@ -10,13 +10,17 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.sdevprem.commonlistdialog.R
 import com.sdevprem.commonlistdialog.ui.authors.AuthorsActivity
+import com.sdevprem.commonlistdialog.ui.common.dismissIfShowing
+import com.sdevprem.commonlistdialog.ui.common.lazyDialogFragment
 import com.sdevprem.commonlistdialog.ui.common.listdialog.ListBottomSheet
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class BooksActivity : AppCompatActivity() {
-    private val listBottomSheet = BookListBottomSheet()
     private val viewModel : BooksViewModel by viewModels()
+    private val listBottomSheet by lazyDialogFragment(BOOKS_BOTTOM_SHEET_TAG){
+        BookListBottomSheet()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +32,8 @@ class BooksActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.choose_btn).setOnClickListener {
-            listBottomSheet.show(supportFragmentManager,"Books List")
+            //if the parent is fragment : use childFragmentManager
+            listBottomSheet.show(supportFragmentManager,BOOKS_BOTTOM_SHEET_TAG)
         }
 
         lifecycleScope.launch {
@@ -37,7 +42,7 @@ class BooksActivity : AppCompatActivity() {
                 findViewById<TextView>(R.id.selected_item).text =
                     "You have selected ${it.name} by ${it.author}"
 
-                listBottomSheet.dismiss()
+                listBottomSheet.dialog.dismissIfShowing()
             }
         }
     }
@@ -48,3 +53,5 @@ class BooksActivity : AppCompatActivity() {
         lazyViewModel = { viewModels<BooksViewModel>({ requireActivity() }) }
    )
 }
+
+private const val BOOKS_BOTTOM_SHEET_TAG = "books_bottom_sheet"

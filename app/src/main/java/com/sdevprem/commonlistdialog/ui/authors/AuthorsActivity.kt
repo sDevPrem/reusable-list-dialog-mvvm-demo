@@ -9,14 +9,18 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.sdevprem.commonlistdialog.R
+import com.sdevprem.commonlistdialog.ui.books.BooksActivity
+import com.sdevprem.commonlistdialog.ui.common.lazyDialogFragment
 import com.sdevprem.commonlistdialog.ui.common.listdialog.ListBottomSheet
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class AuthorsActivity : AppCompatActivity() {
 
-    private val listBottomSheet = AuthorListBottomSheet()
     private val viewModel : AuthorsViewModel by viewModels()
+    private val listBottomSheet by lazyDialogFragment(AUTHORS_BOTTOM_SHEET_TAG){
+        BooksActivity.BookListBottomSheet()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +31,7 @@ class AuthorsActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.choose_btn).setOnClickListener {
             //if the parent is fragment : use childFragmentManager
-            listBottomSheet.show(supportFragmentManager,"Authors List")
+            listBottomSheet.show(supportFragmentManager,AUTHORS_BOTTOM_SHEET_TAG)
         }
 
         lifecycleScope.launch {
@@ -48,3 +52,5 @@ class AuthorsActivity : AppCompatActivity() {
     )
 
 }
+
+private const val AUTHORS_BOTTOM_SHEET_TAG = "authors_bottom_sheet"
