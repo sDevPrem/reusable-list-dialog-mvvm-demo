@@ -3,12 +3,16 @@ package com.sdevprem.commonlistdialog.ui.books
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.sdevprem.commonlistdialog.R
 import com.sdevprem.commonlistdialog.ui.authors.AuthorsActivity
 import com.sdevprem.commonlistdialog.ui.common.listdialog.ListBottomSheet
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class BooksActivity : AppCompatActivity() {
     private val listBottomSheet = BookListBottomSheet()
@@ -25,6 +29,16 @@ class BooksActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.choose_btn).setOnClickListener {
             listBottomSheet.show(supportFragmentManager,"Books List")
+        }
+
+        lifecycleScope.launch {
+            viewModel.bookSelectEvent.collectLatest {
+
+                findViewById<TextView>(R.id.selected_item).text =
+                    "You have selected ${it.name} by ${it.author}"
+
+                listBottomSheet.dismiss()
+            }
         }
     }
 

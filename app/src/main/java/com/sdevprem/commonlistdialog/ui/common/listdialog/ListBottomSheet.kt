@@ -25,7 +25,7 @@ abstract class ListBottomSheet(
 
     private val viewModel by lazyViewModel()
     private val adapter by lazy {
-        ListBottomSheetAdapter(viewModel.list){}
+        ListBottomSheetAdapter(viewModel.list,viewModel::onListItemClick)
     }
 
     private val title
